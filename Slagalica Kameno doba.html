@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prapovijest - Kviz Slagalica</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #eef2f3;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 { color: #2c3e50; margin-bottom: 10px; }
+        p { color: #555; margin-bottom: 20px; }
+
+        #game-container {
+            position: relative;
+            width: 800px;
+            height: 533px;
+            /* Slika špiljskog slikarstva (Lascaux) u pozadini */
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/1/1e/Lascaux_painting.jpg');
+            background-size: cover;
+            border: 8px solid #fff;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 2px;
+            background-color: #ddd;
+        }
+
+        .puzzle {
+            background-color: #8b5a2b;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            user-select: none;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .puzzle:hover {
+            background-color: #a0522d;
+            filter: brightness(1.1);
+        }
+
+        .puzzle.solved {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.9) rotate(5deg);
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .counter {
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Slagalica: Otkrij kameno doba 🦴🦣</h1>
+    <div class="counter">Preostalo puzzli: <span id="count">20</span></div>
+
+    <div id="game-container"></div>
+
+    <div id="message">Klikni na broj i odgovori na pitanje!</div>
+
+    <script>
+        // Pitanja na temelju natuknica o prapovijesti
+        const quizData = [
+            { q: "U kojoj su državi pronađeni najstariji ostatci čovjekova pretka Lucy?", a: "etiopija" },
+            { q: "Kako se zove postupni razvoj čovjeka do današnjeg razumnog čovjeka?", a: "evolucija" },
+            { q: "Kako se naziva razdoblje velike hladnoće i klimatskih promjena?", a: "ledeno doba" },
+            { q: "Kako se naziva način života u kojem se ljudi stalno sele?", a: "nomadski" },
+            { q: "Po kojoj je dolini u Njemačkoj neandertalac dobio ime?", a: "neandertal" },
+            { q: "Koje je najpoznatije nalazište neandertalca u Hrvatskoj?", a: "krapina" },
+            { q: "Tko je istraživao poznato nalazište neandertalaca u Krapini?", a: "dragutin gorjanović kramberger" },
+            { q: "Koji je čovjekov predak pokapao svoje mrtve?", a: "neandertalac" },
+            { q: "Koji su oblik umjetnosti razvili kromanjonci u špiljama?", a: "špiljsko slikarstvo" },
+            { q: "Kako se zove čovjekov predak koji je dobio ime po nalazištu u Francuskoj?", a: "kromanjonac" },
+            { q: "Kako su nazvali ostatke najstarijeg čovjekovog pretka?", a: "lucy" },
+            { q: "Kada su čovjekovi preci živjeli u špiljama?", a: "starije kameno doba" },
+            { q: "Koji je oružani izum obilježio mlađe kameno doba?", a: "luk i strijela" },
+            { q: "Što je uz stočarstvo činilo temelj gospodarstva u mlađem kamenom dobu?", a: "poljoprivreda" },
+            { q: "Kako se zove način života u kojem ljudi žive u trajnim nastambama?", a: "sjedilački" },
+            { q: "Koji se oblik trgovine razvio prije pojave novca?", a: "robna razmjena" },
+            { q: "Koje je poznato neolitičko naselje kod Šibenika?", a: "danilo" },
+            { q: "Kako se naziva pećina u Istri koja je primjer špiljskog slikarstva?", a: "Romualdova" },
+            { q: "Kada su ljudi počeli graditi trajne nastambe?", a: "mlađe kameno doba" },
+            { q: "Kako se latinski naziva razumni čovjek?", a: "homo sapiens" }
+        ];
+
+        const container = document.getElementById('game-container');
+        const messageDisplay = document.getElementById('message');
+        const countDisplay = document.getElementById('count');
+        let solvedCount = 0;
+
+        quizData.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'puzzle';
+            div.innerText = index + 1;
+            
+            div.onclick = function() {
+                const userAnswer = prompt(item.q);
+                
+                if (userAnswer && userAnswer.toLowerCase().trim() === item.a.toLowerCase()) {
+                    div.classList.add('solved');
+                    solvedCount++;
+                    countDisplay.innerText = 20 - solvedCount;
+                    messageDisplay.innerText = "Točno! Otkriva se dio slagalice.";
+                    if (solvedCount === 20) {
+                        messageDisplay.innerText = "Čestitamo! Prapovijesna slika je otkrivena! 🦣🎨";
+                    }
+                } else if (userAnswer !== null) {
+                    alert("Netočno! Savjet: Provjeri pravopis ili pročitaj natuknice ponovno.");
+                }
+            };
+            
+            container.appendChild(div);
+        });
+    </script>
+</body>
+</html>
